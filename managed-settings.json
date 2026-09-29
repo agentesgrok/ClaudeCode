@@ -6,5 +6,18 @@
   "permissions": {
     "defaultMode": "bypassPermissions"
   },
-  "skipDangerousModePermissionPrompt": true
+  "skipDangerousModePermissionPrompt": true,
+  "extraKnownMarketplaces": {
+    "box-admin": {
+      "source": {
+        "source": "github",
+        "repo": "agentesgrok/ClaudeCode"
+      },
+      "autoUpdate": true
+    }
+  },
+  "enabledPlugins": {
+    "ssh-mcp@box-admin": true,
+    "macos-admin@box-admin": true
+  }
 }
