@@ -32,35 +32,59 @@ antes de instalar, ele roda a cada render do prompt de todo mundo na maquina.
 
 ## Onde fica no Mac
 
-Nesta maquina o marketplace e carregado pelo **managed settings**, a camada de
-configuracao global do Claude Code no macOS. Tudo mora em
-`/Library/Application Support/ClaudeCode/`, root-owned:
+Nesta maquina este repositorio esta clonado direto em
+`/Library/Application Support/ClaudeCode/`, a pasta que o Claude Code usa como
+**managed settings** no macOS. Os arquivos instalados ficam na raiz, ao lado do
+clone:
 
 ```
 /Library/Application Support/ClaudeCode/
-├── managed-settings.json     root:admin 644  statusLine, extraKnownMarketplaces, enabledPlugins
-├── statusline.sh             root:wheel 755  script instalado (copia de macos-admin/scripts/)
-└── plugins/                  root:wheel      copia local deste repositorio
-    ├── .claude-plugin/marketplace.json
-    └── macos-admin/
-        ├── .claude-plugin/plugin.json
-        ├── scripts/statusline.sh
-        └── skills/{global-statusline,new-macos-user}/SKILL.md
+├── managed-settings.json     root:admin 644  chave "statusLine"
+├── statusline.sh             root:wheel 755  copia de macos-admin/scripts/statusline.sh
+├── README.md                                 este arquivo (clone do repositorio)
+├── .claude-plugin/marketplace.json
+└── macos-admin/
+    ├── .claude-plugin/plugin.json
+    ├── scripts/statusline.sh
+    └── skills/{global-statusline,new-macos-user}/SKILL.md
 ```
 
-Por estar no managed settings, vale para **todos os usuarios** da maquina e tem
-precedencia sobre `~/.claude/settings.json` e `.claude/settings.json` de projeto:
-ninguem consegue desligar o plugin nem sobrescrever a status line pelo settings
-proprio. Editar qualquer arquivo ali exige `sudo`.
+O clone e os arquivos do repositorio pertencem ao usuario que clonou; apenas
+`managed-settings.json` e `statusline.sh` sao root-owned. Editar esses dois
+exige `sudo`.
 
-O `managed-settings.json` pode apontar o marketplace de duas formas:
+Por estar no managed settings, a status line vale para **todos os usuarios** da
+maquina e tem precedencia sobre `~/.claude/settings.json` e `.claude/settings.json`
+de projeto: ninguem consegue sobrescrever ou desligar pelo settings proprio.
 
-- **Diretorio local** (`"source": "directory", "path": "/Library/Application Support/ClaudeCode/plugins"`):
-  nao depende de rede, mas cada atualizacao e um `sudo cp` manual do repositorio
-  para `plugins/`.
+Hoje o `managed-settings.json` contem so a status line:
+
+```json
+{
+  "statusLine": {
+    "type": "command",
+    "command": "bash '/Library/Application Support/ClaudeCode/statusline.sh'"
+  }
+}
+```
+
+O marketplace ainda nao esta no managed settings. Para adicionar, ha duas formas:
+
+- **Diretorio local** (`"source": "directory", "path": "/Library/Application Support/ClaudeCode"`):
+  aponta para este clone; nao depende de rede, mas cada atualizacao e um
+  `git pull` manual na pasta.
 - **GitHub** (`"source": "github", "repo": "agentesgrok/ClaudeCode"`, com
-  `"autoUpdate": true`): o Claude Code clona e atualiza sozinho; a pasta `plugins/`
-  deixa de ser necessaria. E o formato mostrado em *Rollout para uma frota*.
+  `"autoUpdate": true`): o Claude Code clona e atualiza sozinho; o clone local
+  deixa de ser necessario. E o formato mostrado em *Rollout para uma frota*.
+
+Atualizar o script instalado depois de um `git pull`:
+
+```bash
+sudo cp "/Library/Application Support/ClaudeCode/macos-admin/scripts/statusline.sh" \
+        "/Library/Application Support/ClaudeCode/statusline.sh"
+sudo chown root:wheel "/Library/Application Support/ClaudeCode/statusline.sh"
+sudo chmod 755 "/Library/Application Support/ClaudeCode/statusline.sh"
+```
 
 ## Rollout para uma frota
 
