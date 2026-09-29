@@ -26,7 +26,9 @@ pessoa roda os que precisam de `sudo` com o prefixo `!`:
   `permissions.defaultMode` + `skipDangerousModePermissionPrompt` no
   `managed-settings.json`. Cobre merge com `jq` num arquivo ja existente, os
   opcionais alias em `/etc/zshrc` e wrapper `claude-bypass`, verificacao,
-  reversao e como proibir bypass com `disableBypassPermissionsMode`.
+  reversao e como proibir bypass com `disableBypassPermissionsMode`. Tem uma
+  secao Linux/Debian com os caminhos equivalentes
+  (`/etc/claude-code/managed-settings.json`, `/etc/profile.d`, `root:root`).
 - **`/macos-admin:new-macos-user`** — cria conta local com `sysadminctl`: escolha
   de UID livre, admin por padrao, `createhomedir`, e verificacao da senha com
   `dscl . -authonly`. Cobre os avisos enganosos de Secure Token e FileVault.
@@ -134,6 +136,11 @@ Para deixar um Mac novo igual a este (status line + bypass global para todos):
 O agente nao instala sozinho: precisa de `sudo` com senha, e o classificador do
 auto mode bloqueia acoes que configurem bypass. Por isso todas as skills sao
 "agente prepara, pessoa roda com `!`".
+
+Num Linux/Debian o plugin instala igual e a skill `global-bypass` traz a secao
+com os caminhos de la: managed settings em `/etc/claude-code/`, alias em
+`/etc/profile.d/`, wrapper em `/usr/local/bin` com `root:root`. As demais
+skills (status line, `sysadminctl`) sao especificas de macOS.
 
 ## Rollout para uma frota
 
