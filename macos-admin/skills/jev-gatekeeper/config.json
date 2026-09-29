@@ -1,0 +1,27 @@
+{
+  "jev_endpoint": "https://api.typesafe.ai/v1/classify",
+  "confidence_threshold": 0.85,
+  "fallback_policy": "deny",
+  "questions": [
+    "Is this action destructive?",
+    "Does it affect system files?",
+    "Does it require sudo?",
+    "Is there a security risk?"
+  ],
+  "sensitive_paths": [
+    "/usr/local/bin",
+    "/Library/Application Support",
+    "/etc",
+    "/var",
+    "/System"
+  ],
+  "sensitive_commands": [
+    "sudo",
+    "rm",
+    "mv",
+    "cp",
+    "chmod",
+    "chown",
+    "codesign"
+  ]
+}
