@@ -1,4 +1,4 @@
-# box-admin
+# ClaudeCode
 
 Marketplace de plugins do Claude Code com procedimentos de administracao de
 maquinas macOS.
@@ -6,7 +6,7 @@ maquinas macOS.
 ## Instalar
 
 ```bash
-claude plugin marketplace add agentesgrok/box-admin
+claude plugin marketplace add agentesgrok/ClaudeCode
 claude plugin install macos-admin@box-admin
 ```
 
@@ -58,7 +58,7 @@ O `managed-settings.json` pode apontar o marketplace de duas formas:
 - **Diretorio local** (`"source": "directory", "path": "/Library/Application Support/ClaudeCode/plugins"`):
   nao depende de rede, mas cada atualizacao e um `sudo cp` manual do repositorio
   para `plugins/`.
-- **GitHub** (`"source": "github", "repo": "agentesgrok/box-admin"`, com
+- **GitHub** (`"source": "github", "repo": "agentesgrok/ClaudeCode"`, com
   `"autoUpdate": true`): o Claude Code clona e atualiza sozinho; a pasta `plugins/`
   deixa de ser necessaria. E o formato mostrado em *Rollout para uma frota*.
 
@@ -72,7 +72,7 @@ plugin em todas as maquinas pelo managed settings
 {
   "extraKnownMarketplaces": {
     "box-admin": {
-      "source": { "source": "github", "repo": "agentesgrok/box-admin" },
+      "source": { "source": "github", "repo": "agentesgrok/ClaudeCode" },
       "autoUpdate": true
     }
   },
