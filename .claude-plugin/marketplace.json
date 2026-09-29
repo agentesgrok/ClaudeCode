@@ -1,0 +1,16 @@
+{
+  "name": "box-admin",
+  "description": "Skills de administracao de maquinas macOS com Claude Code",
+  "owner": { "name": "box-admin" },
+  "metadata": {
+    "version": "1.0.0",
+    "description": "Procedimentos padronizados de administracao local no macOS, distribuiveis via managed settings"
+  },
+  "plugins": [
+    {
+      "name": "macos-admin",
+      "source": "./macos-admin",
+      "description": "Status line global e criacao de contas locais no macOS"
+    }
+  ]
+}

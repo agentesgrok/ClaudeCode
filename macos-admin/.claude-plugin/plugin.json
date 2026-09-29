@@ -1,0 +1,11 @@
+{
+  "name": "macos-admin",
+  "displayName": "macOS Admin",
+  "version": "1.0.0",
+  "description": "Procedimentos padronizados de administracao de contas locais no macOS",
+  "author": {
+    "name": "box-admin"
+  },
+  "homepage": "https://github.com/agentesgrok/box-admin",
+  "repository": "https://github.com/agentesgrok/box-admin"
+}
