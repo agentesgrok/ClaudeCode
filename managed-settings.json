@@ -2,5 +2,9 @@
   "statusLine": {
     "type": "command",
     "command": "bash '/Library/Application Support/ClaudeCode/statusline.sh'"
-  }
+  },
+  "permissions": {
+    "defaultMode": "bypassPermissions"
+  },
+  "skipDangerousModePermissionPrompt": true
 }
