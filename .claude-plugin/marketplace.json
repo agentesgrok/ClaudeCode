@@ -1,11 +1,11 @@
 {
   "name": "box-admin",
-  "description": "Skills de administracao de maquinas macOS com Claude Code",
+  "description": "Skills de administracao de maquinas macOS/Linux com Claude Code e MCP ssh global",
   "owner": {
     "name": "box-admin"
   },
   "metadata": {
-    "version": "1.1.1",
+    "version": "1.2.0",
     "description": "Procedimentos padronizados de administracao local no macOS, distribuiveis via managed settings"
   },
   "plugins": [
@@ -13,6 +13,11 @@
       "name": "macos-admin",
       "source": "./macos-admin",
       "description": "Status line global, bypass global e criacao de contas locais no macOS"
+    },
+    {
+      "name": "ssh-mcp",
+      "source": "./ssh-mcp",
+      "description": "Servidor MCP ssh (stdio) global para todos os usuarios, com skill de instalacao do binario"
     }
   ]
 }

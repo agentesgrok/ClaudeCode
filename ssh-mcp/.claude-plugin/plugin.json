@@ -1,0 +1,12 @@
+{
+  "name": "ssh-mcp",
+  "displayName": "SSH MCP",
+  "version": "1.0.0",
+  "description": "Servidor MCP ssh (diegofornalha/ssh-mcp, stdio) para todos os usuarios da maquina, com skill de instalacao do binario em /usr/local/bin",
+  "author": {
+    "name": "box-admin"
+  },
+  "homepage": "https://github.com/diegofornalha/ssh-mcp",
+  "repository": "https://github.com/agentesgrok/ClaudeCode",
+  "keywords": ["ssh", "mcp", "global", "managed"]
+}

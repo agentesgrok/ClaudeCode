@@ -8,6 +8,7 @@ maquinas macOS.
 ```bash
 claude plugin marketplace add agentesgrok/ClaudeCode
 claude plugin install macos-admin@box-admin
+claude plugin install ssh-mcp@box-admin
 ```
 
 ## Plugins
@@ -33,6 +34,21 @@ pessoa roda os que precisam de `sudo` com o prefixo `!`:
   de UID livre, admin por padrao, `createhomedir`, e verificacao da senha com
   `dscl . -authonly`. Cobre os avisos enganosos de Secure Token e FileVault.
 
+### ssh-mcp
+
+Entrega o servidor MCP `ssh` ([diegofornalha/ssh-mcp](https://github.com/diegofornalha/ssh-mcp),
+Rust, transporte stdio) para todos os usuarios da maquina. O `.mcp.json` do
+plugin aponta para `/usr/local/bin/ssh-mcp-stdio`, um binario root-owned que
+fica fora do plugin. A skill **`/ssh-mcp:global-ssh-mcp`** cobre compilar ou
+copiar o binario, instalar em `/usr/local/bin` (macOS e Linux), forcar o plugin
+para todos via `enabledPlugins` no managed settings, remover o `ssh` duplicado
+que alguem tenha adicionado por conta, verificar, atualizar e remover.
+
+Por que plugin e nao `managed-mcp.json`: esse arquivo toma controle exclusivo
+dos MCPs e derruba os servidores dos usuarios e os conectores claude.ai. E
+`managedMcpServers` so aceita servidores HTTP. O plugin soma o `ssh` aos MCPs
+que cada pessoa ja tem.
+
 Dependencias do statusline de referencia: `jq` e `curl`. Ele le o token OAuth do
 **proprio usuario** (Keychain ou `~/.claude/.credentials.json`) para consultar
 `api.anthropic.com/api/oauth/profile` e exibir email e assento — leia o script
@@ -51,19 +67,25 @@ clone:
 ├── statusline.sh             root:wheel 755  copia de macos-admin/scripts/statusline.sh
 ├── README.md                                 este arquivo (clone do repositorio)
 ├── .claude-plugin/marketplace.json
-└── macos-admin/
+├── macos-admin/
+│   ├── .claude-plugin/plugin.json
+│   ├── scripts/statusline.sh
+│   └── skills/{global-statusline,global-bypass,new-macos-user}/SKILL.md
+└── ssh-mcp/
     ├── .claude-plugin/plugin.json
-    ├── scripts/statusline.sh
-    └── skills/{global-statusline,global-bypass,new-macos-user}/SKILL.md
+    ├── .mcp.json                             servidor "ssh" -> /usr/local/bin/ssh-mcp-stdio
+    └── skills/global-ssh-mcp/SKILL.md
 ```
 
-Fora da pasta, o bypass global tambem deixou dois opcionais instalados nesta
-maquina, ambos redundantes com o managed settings:
+Fora da pasta, ficam instalados nesta maquina:
 
 ```
+/usr/local/bin/ssh-mcp-stdio  root:wheel 755  binario do MCP ssh (Rust, arm64), usado pelo plugin ssh-mcp
 /etc/zshrc                    bloco "claude bypass global": alias claude='claude --dangerously-skip-permissions'
 /usr/local/bin/claude-bypass  root:wheel 755  exec /usr/local/bin/claude --dangerously-skip-permissions "$@"
 ```
+
+Os dois ultimos sao opcionais do bypass, redundantes com o managed settings.
 
 O clone e os arquivos do repositorio pertencem ao usuario que clonou; apenas
 `managed-settings.json` e `statusline.sh` sao root-owned. Editar esses dois
@@ -157,10 +179,16 @@ plugin em todas as maquinas pelo managed settings
     }
   },
   "enabledPlugins": {
-    "macos-admin@box-admin": true
+    "macos-admin@box-admin": true,
+    "ssh-mcp@box-admin": true
   }
 }
 ```
+
+Com `ssh-mcp@box-admin` forcado, toda conta ganha o MCP `ssh` desde que o
+binario esteja em `/usr/local/bin/ssh-mcp-stdio` (a skill instala). O repo
+precisa estar publicado no GitHub antes, porque a fonte e `github` com
+`autoUpdate`.
 
 ## Releases
 
