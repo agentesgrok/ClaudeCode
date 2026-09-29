@@ -203,6 +203,12 @@ managed; e normal. Se a conta tinha um `box-admin` antigo apontando para outra
 pasta, rode `claude plugin marketplace remove box-admin` e abra uma sessao
 nova.
 
+## Arquitetura
+
+Enforcement neste sistema e hook ou managed settings, nunca skill nem
+CLAUDE.md. O porque, os controles e o que ainda falta estao em
+[`docs/preparado-para-agi.md`](docs/preparado-para-agi.md).
+
 ## Releases
 
 O `version` em `macos-admin/.claude-plugin/plugin.json` precisa ser incrementado
