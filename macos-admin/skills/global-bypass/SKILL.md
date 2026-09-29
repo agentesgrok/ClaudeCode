@@ -1,6 +1,6 @@
 ---
 name: global-bypass
-description: Faz o Claude Code abrir direto em modo bypassPermissions para todos os usuarios desta maquina, via managed settings em /Library/Application Support/ClaudeCode, com opcionais de alias global no zsh e wrapper claude-bypass. Use quando pedirem para digitar claude e ja entrar sem pedir permissao, para todo mundo, global, ou para reverter/proibir isso.
+description: Faz o Claude Code abrir direto em modo bypassPermissions para todos os usuarios da maquina, via managed settings (macOS em /Library/Application Support/ClaudeCode, Linux/WSL em /etc/claude-code), com opcionais de alias global e wrapper claude-bypass. Use quando pedirem para digitar claude e ja entrar sem pedir permissao, para todo mundo, global, no Mac ou no Linux, ou para reverter/proibir isso.
 ---
 
 # Bypass global (todos os usuarios)
@@ -136,6 +136,68 @@ confirmacao.
 - Alias: apague o bloco entre `# >>> claude bypass global >>>` e
   `# <<< claude bypass global <<<` em `/etc/zshrc`, ou restaure o backup.
 - Wrapper: `! sudo rm /usr/local/bin/claude-bypass`.
+
+## Linux / Debian
+
+Mesmas duas chaves, mesmo comportamento. Muda so onde as coisas ficam:
+
+| | macOS | Linux e WSL |
+|---|---|---|
+| managed settings | `/Library/Application Support/ClaudeCode/managed-settings.json` | `/etc/claude-code/managed-settings.json` |
+| dono do arquivo | `root:admin 644` | `root:root 644` |
+| alias global | `/etc/zshrc` | `/etc/profile.d/claude-bypass.sh` (todo shell de login) ou `/etc/bash.bashrc` (bash interativo) |
+| wrapper | `/usr/local/bin/claude-bypass`, `root:wheel` | `/usr/local/bin/claude-bypass`, `root:root` |
+| binario do claude | `/usr/local/bin/claude` | varia: `/usr/local/bin/claude` (npm -g), `/usr/bin/claude` (pacote) ou `~/.local/bin/claude` (instalador nativo, por usuario) |
+
+No Linux o `claude` costuma estar por usuario em `~/.local/bin`, entao o
+wrapper deve resolver o binario em tempo de execucao com `command -v` em vez de
+caminho fixo. Em WSL, `/etc/claude-code` pode ser gravavel pelo usuario e um
+managed settings do Windows pode ficar acima dele.
+
+Managed settings (rode direto com `sudo`, sem o prefixo `!` se estiver fora do
+Claude Code; heredoc funciona num terminal normal):
+
+```bash
+sudo mkdir -p /etc/claude-code
+[ -f /etc/claude-code/managed-settings.json ] && sudo cp /etc/claude-code/managed-settings.json /etc/claude-code/managed-settings.json.bak-$(date +%Y%m%d-%H%M%S)
+# arquivo novo:
+sudo tee /etc/claude-code/managed-settings.json > /dev/null << 'EOF'
+{
+  "permissions": { "defaultMode": "bypassPermissions" },
+  "skipDangerousModePermissionPrompt": true
+}
+EOF
+# ou merge num arquivo existente:
+jq '. + {"permissions": ((.permissions // {}) + {"defaultMode": "bypassPermissions"}), "skipDangerousModePermissionPrompt": true}' /etc/claude-code/managed-settings.json | sudo tee /etc/claude-code/managed-settings.json.new > /dev/null && sudo mv /etc/claude-code/managed-settings.json.new /etc/claude-code/managed-settings.json
+sudo chown root:root /etc/claude-code/managed-settings.json && sudo chmod 644 /etc/claude-code/managed-settings.json && jq . /etc/claude-code/managed-settings.json
+```
+
+Alias global (opcional):
+
+```bash
+sudo tee /etc/profile.d/claude-bypass.sh > /dev/null << 'EOF'
+# >>> claude bypass global >>>
+alias claude='claude --dangerously-skip-permissions'
+# <<< claude bypass global <<<
+EOF
+sudo chmod 644 /etc/profile.d/claude-bypass.sh
+```
+
+Wrapper (opcional):
+
+```bash
+sudo tee /usr/local/bin/claude-bypass > /dev/null << 'EOF'
+#!/bin/bash
+exec "$(command -v claude)" --dangerously-skip-permissions "$@"
+EOF
+sudo chmod 755 /usr/local/bin/claude-bypass
+sudo chown root:root /usr/local/bin/claude-bypass
+ls -la /usr/local/bin/claude-bypass   # precisa sair -rwxr-xr-x
+```
+
+Verificacao e reversao sao as mesmas das secoes acima, trocando o caminho do
+managed settings. Bypass tambem nao funciona como `root` no Linux; use uma
+conta comum.
 
 ## Proibir bypass na maquina inteira
 
