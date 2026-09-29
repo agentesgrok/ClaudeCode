@@ -125,7 +125,7 @@ Resultado esperado no JSON:
 ```
 
 Se algum usuario ja tinha um marketplace `box-admin` apontando para uma pasta
-local, a entrada managed com o mesmo nome prevalece.
+local, o managed **nao** substitui sozinho; veja "Verificar" abaixo.
 
 Sem managed settings, cada pessoa instala por conta propria:
 
@@ -147,12 +147,33 @@ claude mcp remove ssh -s user
 
 ## Verificar
 
-Em qualquer conta, sessao nova:
+O auto-install de `enabledPlugins` acontece na **primeira sessao** de cada
+conta depois do managed settings, nao ao rodar `claude plugin list`. Abra um
+`claude` (ou `claude -p ok`) antes de conferir.
 
 ```bash
-claude plugin list                      # ssh-mcp@box-admin enabled
-claude mcp list                         # ssh ... /usr/local/bin/ssh-mcp-stdio - Connected
-claude doctor 2>&1 | grep -i -A3 "invalid settings\|plugin"   # sem erros
+claude plugin list --json               # os dois com "scope": "managed", "enabled": true
+claude mcp list                         # plugin:ssh-mcp:ssh: /usr/local/bin/ssh-mcp-stdio - Connected
+claude doctor 2>&1 | grep -i -A3 "invalid settings"   # tem que sair vazio
+```
+
+Comportamentos que confundem, mas sao normais:
+
+- `claude plugin list` **sem** `--json` responde "No plugins installed" para
+  plugins managed. Use `--json`.
+- O servidor aparece como `plugin:ssh-mcp:ssh`, nao como `ssh`. As ferramentas
+  ficam com prefixo `mcp__plugin_ssh-mcp_ssh__`.
+- O plugin vai para `~/.claude/plugins/cache/box-admin/ssh-mcp/<versao>/` de
+  cada usuario; `installed_plugins.json` continua vazio.
+
+Se a conta ja tinha um marketplace `box-admin` apontando para outro lugar (por
+exemplo uma pasta local que nao existe mais), o managed nao substitui sozinho.
+Remova o antigo e abra uma sessao nova:
+
+```bash
+claude plugin marketplace remove box-admin
+claude -p ok
+claude plugin marketplace list          # box-admin  Source: GitHub (agentesgrok/ClaudeCode)
 ```
 
 Dentro do `claude`, `/mcp` lista o servidor e `/plugin` mostra o plugin como

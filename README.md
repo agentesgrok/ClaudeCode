@@ -63,7 +63,7 @@ clone:
 
 ```
 /Library/Application Support/ClaudeCode/
-├── managed-settings.json     root:admin 644  statusLine + bypass global
+├── managed-settings.json     root:admin 644  statusLine + bypass global + marketplace/plugins forcados
 ├── statusline.sh             root:wheel 755  copia de macos-admin/scripts/statusline.sh
 ├── README.md                                 este arquivo (clone do repositorio)
 ├── .claude-plugin/marketplace.json
@@ -189,6 +189,19 @@ Com `ssh-mcp@box-admin` forcado, toda conta ganha o MCP `ssh` desde que o
 binario esteja em `/usr/local/bin/ssh-mcp-stdio` (a skill instala). O repo
 precisa estar publicado no GitHub antes, porque a fonte e `github` com
 `autoUpdate`.
+
+Nesta maquina isso ja esta instalado e verificado. O que esperar em qualquer
+conta, depois de abrir uma sessao (o auto-install roda na primeira sessao):
+
+```bash
+claude plugin list --json     # macos-admin e ssh-mcp com "scope": "managed"
+claude mcp list               # plugin:ssh-mcp:ssh: /usr/local/bin/ssh-mcp-stdio - Connected
+```
+
+`claude plugin list` sem `--json` diz "No plugins installed" para plugins
+managed; e normal. Se a conta tinha um `box-admin` antigo apontando para outra
+pasta, rode `claude plugin marketplace remove box-admin` e abra uma sessao
+nova.
 
 ## Releases
 
