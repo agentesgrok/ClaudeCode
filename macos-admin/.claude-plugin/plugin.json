@@ -1,7 +1,7 @@
 {
   "name": "macos-admin",
   "displayName": "macOS Admin",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Procedimentos padronizados de administracao de maquinas macOS: status line global, bypass global e contas locais",
   "author": {
     "name": "box-admin"
